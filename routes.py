@@ -2,6 +2,7 @@ import logging
 import flet as ft
 from pages.home_page import HomePage
 from pages.formulario_page import FormularioPage
+from pages.coletados import ColetadosPage
 import logging
 
 # Configurando o logging nativo
@@ -11,6 +12,7 @@ logging.basicConfig(
     level=logging.INFO,
 )
 logging.getLogger("flet_core").setLevel(logging.INFO)
+
 
 def setup_routes(page: ft.Page):
     logging.info("Configurando rotas")
@@ -38,6 +40,10 @@ def setup_routes(page: ft.Page):
                     route="/formulario",
                     vertical_alignment=ft.MainAxisAlignment.CENTER,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    appbar=ft.AppBar(
+                        title=ft.Text("formulario - Insight local"),
+                        bgcolor=ft.colors.SURFACE,
+                    ),
                     controls=[
                         FormularioPage(page),
                     ],
@@ -51,9 +57,12 @@ def setup_routes(page: ft.Page):
                     route="/pesquisador",
                     vertical_alignment=ft.MainAxisAlignment.CENTER,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    appbar=ft.AppBar(
+                        title=ft.Text("Pesquisador - Insight local"),
+                        bgcolor=ft.colors.SURFACE,
+                    ),
                     controls=[
-                        ft.Text("Pesquisador"),
-                        ft.ElevatedButton("Voltar", on_click=lambda _: page.go("/")),
+                        ColetadosPage(page),
                     ],
                     scroll=ft.ScrollMode.AUTO,
                 )
@@ -62,20 +71,11 @@ def setup_routes(page: ft.Page):
         page.update()
 
     def view_pop(view):
-        if len(page.views) > 1:
-            page.views.pop()
-            top_view = page.views[-1]
-            logging.info(f"Retornando para a rota anterior: {top_view.route}")
-            page.go(top_view.route)
-        else:
-            logging.info("Sem mais views no histórico, retornando à home.")
-            page.go("/")
+        page.views.pop()
+        top_view = page.views[-1]
+        logging.info(f"Retornando para a rota anterior: {top_view.route}")
+        page.go(top_view.route)
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop
-
-    if not page.route:
-        logging.info("Nenhuma rota especificada, redirecionando para a home")
-        page.go("/")
-    else:
-        route_change(page.route)
+    page.go(page.route)
