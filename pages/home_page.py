@@ -16,8 +16,8 @@ def HomePage(page: ft.Page):
 
         if senha_digitada == senha_correta:
             dialog.open = False
-            page.update()
             page.go("/pesquisador")
+            page.update()
         else:
             campo_senha.error_text = "Senha incorreta"
             page.update()
